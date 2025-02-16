@@ -15,18 +15,6 @@ struct AppState {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|app| {
-            let backend = Arc::new(LlamaBackend::init().unwrap_or(LlamaBackend {}));
-            let model_config = ModelConfig::default();
-            let model_manager = Arc::new(ModelManager::new(model_config, backend.clone()).unwrap());
-            let gen_config = GenerationConfig::default();
-            let generator = Arc::new(TextGenerator::new(model_manager.clone(), gen_config));
-            app.manage(Mutex::new(AppState {
-                backend,
-                generator: generator.clone(),
-            }));
-            Ok(())
-        })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![generate_text, switch_model])
         .run(tauri::generate_context!())
@@ -36,7 +24,10 @@ pub fn run() {
 #[tauri::command]
 async fn generate_text(prompt: String, state: State<'_, Mutex<AppState>>) -> Result<(), ()> {
     let state = state.lock().await;
-    state.generator.generate(&prompt, state.backend.clone()).unwrap();
+    state
+        .generator
+        .generate(&prompt, state.backend.clone())
+        .unwrap();
     Ok(())
 }
 
