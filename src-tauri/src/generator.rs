@@ -20,7 +20,7 @@ pub struct GenerationConfig {
 impl Default for GenerationConfig {
     fn default() -> Self {
         Self {
-            max_length: 32,
+            max_length: 4096 * 2,
             batch_size: 512,
         }
     }
@@ -39,7 +39,7 @@ impl TextGenerator {
         }
     }
 
-    pub fn generate(&self, prompt: &str, backend: Arc<LlamaBackend>) -> Result<()> {
+    pub fn generate(&self, prompt: &str, backend: Arc<LlamaBackend>, callback: Option<&dyn Fn(String)>) -> Result<()> {
         let mut ctx = self
             .model_manager
             .model
@@ -61,7 +61,7 @@ impl TextGenerator {
         ctx.decode(&mut batch)
             .with_context(|| "llama_decode() failed")?;
 
-        self.generate_text(&mut ctx, &mut batch)?;
+        self.generate_text(&mut ctx, &mut batch, callback)?;
 
         Ok(())
     }
@@ -114,7 +114,12 @@ either reduce n_len or increase n_ctx"
         Ok(())
     }
 
-    fn generate_text(&self, ctx: &mut LlamaContext, batch: &mut LlamaBatch) -> Result<()> {
+    fn generate_text(
+        &self,
+        ctx: &mut LlamaContext,
+        batch: &mut LlamaBatch,
+        callback: Option<&dyn Fn(String)>,
+    ) -> Result<()> {
         let mut n_cur = batch.n_tokens();
         let mut n_decode = 0;
         let t_main_start = ggml_time_us();
@@ -139,6 +144,9 @@ either reduce n_len or increase n_ctx"
             let mut output_string = String::with_capacity(32);
             let _decode_result = decoder.decode_to_string(&output_bytes, &mut output_string, false);
             print!("{output_string}");
+            if let Some(callback) = callback {
+                callback(output_string);
+            }
             std::io::stdout().flush()?;
 
             batch.clear();
