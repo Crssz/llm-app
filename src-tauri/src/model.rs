@@ -46,6 +46,7 @@ impl ModelManager {
         let model = LlamaModel::load_from_file(&backend.clone(), model_path, &model_params)
             .with_context(|| "unable to load model")?;
 
+        dbg!("{:?}", model.n_layer());
         let context = LlamaContextParams::default()
             .with_n_ctx(Some(NonZeroU32::new(config.context_size).unwrap()));
 

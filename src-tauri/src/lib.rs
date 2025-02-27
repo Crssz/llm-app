@@ -49,7 +49,7 @@ async fn switch_model(app: tauri::AppHandle,state: State<'_, Mutex<AppState>>) -
     let state = state.lock().await;
     let backend = state.backend.clone();
     let model_config = ModelConfig {
-        n_gpu_layers: 1,
+        n_gpu_layers: 24,
         context_size: 4096 * 20,
         model_repo: "lmstudio-community/Qwen2.5-Coder-7B-Instruct-GGUF".to_string(),
         model_file: "Qwen2.5-Coder-7B-Instruct-Q4_K_M.gguf".to_string(),
