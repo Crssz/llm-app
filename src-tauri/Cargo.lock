@@ -774,6 +774,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "cpu-backend"
+version = "0.1.0"
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -851,6 +855,13 @@ checksum = "32a2785755761f3ddc1492979ce1e48d2c00d09311c39e4466429188f3dd6501"
 dependencies = [
  "quote",
  "syn 2.0.98",
+]
+
+[[package]]
+name = "cuda-backend"
+version = "0.1.0"
+dependencies = [
+ "llama-cpp-2",
 ]
 
 [[package]]
@@ -5096,6 +5107,13 @@ checksum = "d3b17ae1f6c8a2b28506cd96d412eebf83b4a0ff2cbefeeb952f2f9dfa44ba18"
 dependencies = [
  "cc",
  "libc",
+]
+
+[[package]]
+name = "vulkan-backend"
+version = "0.1.0"
+dependencies = [
+ "llama-cpp-2",
 ]
 
 [[package]]

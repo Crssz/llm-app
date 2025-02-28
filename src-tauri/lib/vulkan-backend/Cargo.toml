@@ -1,0 +1,7 @@
+[package]
+name = "vulkan-backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+llama-cpp-2 = { version = "0.1.102", features = ["vulkan"] }
